@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descending Data: Portrait of an Ego (10 Slices)</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0a0c;
+    --bg-secondary: #111116;
+    --bg-card: #16161c;
+    --text-primary: #e8e4df;
+    --text-secondary: #8a857e;
+    --text-muted: #5a564f;
+    --accent-warm: #d4683a;
+    --accent-glow: #e8954a;
+    --accent-green: #5a7a4a;
+    --accent-blush: #d4a090;
+    --border: rgba(255,255,255,0.06);
+    --glass: rgba(255,255,255,0.03);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'EB Garamond', Georgia, serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    background: rgba(10,10,12,0.7);
+    border-bottom: 1px solid var(--border);
+  }
+
+  nav .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  nav .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  nav .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  nav .nav-links a:hover { color: var(--accent-warm); }
+
+  /* ── HERO IMAGES ── */
+  .hero-images {
+    padding-top: 5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+  }
+
+  .hero-img-cell {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+  }
+
+  .hero-img-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .hero-img-cell:hover img {
+    transform: scale(1.04);
+  }
+
+  .hero-img-cell .hero-img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10,10,12,0) 50%, rgba(10,10,12,0.6) 100%);
+    pointer-events: none;
+  }
+
+  .hero-img-tag {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--bg-primary);
+    background: var(--accent-warm);
+    padding: 0.35rem 0.8rem;
+    border-radius: 2px;
+    z-index: 2;
+  }
+
+  /* ── HERO TEXT ── */
+  .hero {
+    padding: 5rem 3rem 4rem;
+    position: relative;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(212,104,58,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 900px;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-title .thin {
+    font-weight: 400;
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    color: var(--accent-blush);
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  .hero-meta .meta-item { display: flex; flex-direction: column; }
+
+  .meta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .meta-value { font-size: 1rem; color: var(--text-primary); }
+
+  /* ── IMAGE SELECTOR ── */
+  .image-selector {
+    padding: 2rem 3rem 6rem;
+    position: relative;
+  }
+
+  .selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .selector-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .selector-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .image-card {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    background: var(--bg-card);
+  }
+
+  .image-card:hover {
+    border-color: rgba(212,104,58,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(212,104,58,0.06);
+  }
+
+  .image-card.active {
+    border-color: var(--accent-warm);
+    box-shadow: 0 0 0 1px var(--accent-warm), 0 20px 60px rgba(0,0,0,0.5), 0 0 60px rgba(212,104,58,0.1);
+  }
+
+  .image-card .card-number {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--bg-primary);
+    background: var(--accent-warm);
+    padding: 0.3rem 0.7rem;
+    border-radius: 2px;
+    z-index: 2;
+    text-transform: uppercase;
+  }
+
+  .image-card .card-img-wrap {
+    aspect-ratio: 4/3;
+    overflow: hidden;
+  }
+
+  .image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .image-card:hover img { transform: scale(1.05); }
+
+  .image-card .card-info {
+    padding: 1rem 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  /* ── FEATURED IMAGE ── */
+  .featured { padding: 0 3rem 6rem; }
+
+  .featured-wrap {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+
+  .featured-wrap img {
+    width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    display: block;
+    background: #2a2a30;
+  }
+
+  .featured-caption {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+  }
+
+  .featured-caption .cap-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .featured-caption .cap-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+  }
+
+  /* ── TECHNIQUE ── */
+  .technique {
+    padding: 6rem 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .technique-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .technique-left .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    margin-bottom: 1.5rem;
+  }
+
+  .technique-left h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 2rem;
+  }
+
+  .technique-left h2 em {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent-blush);
+  }
+
+  .technique-right p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .technique-right p:first-child::first-letter {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    float: left;
+    margin-right: 0.5rem;
+    margin-top: 0.1rem;
+    line-height: 0.85;
+    color: var(--accent-warm);
+  }
+
+  /* ── SPECS ── */
+  .specs {
+    padding: 4rem 3rem 6rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .specs-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .spec-item { background: var(--bg-secondary); padding: 2rem; }
+
+  .spec-item .spec-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--accent-warm);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .spec-item .spec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+  }
+
+  .spec-item .spec-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ── PROCESS ── */
+  .process {
+    padding: 6rem 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .process-inner { max-width: 1200px; margin: 0 auto; }
+
+  .process-header { text-align: center; margin-bottom: 4rem; }
+
+  .process-header .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    margin-bottom: 1rem;
+  }
+
+  .process-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+  }
+
+  .layers-stack { display: flex; flex-direction: column; gap: 0; }
+
+  .layer-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border);
+    align-items: start;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s forwards;
+  }
+
+  .layer-row:nth-child(1) { animation-delay: 0.1s; }
+  .layer-row:nth-child(2) { animation-delay: 0.2s; }
+  .layer-row:nth-child(3) { animation-delay: 0.3s; }
+  .layer-row:nth-child(4) { animation-delay: 0.4s; }
+  .layer-row:nth-child(5) { animation-delay: 0.5s; }
+
+  .layer-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--accent-warm);
+    padding-top: 0.3rem;
+  }
+
+  .layer-content h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .layer-content p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+  }
+
+  /* ── EFFECT ── */
+  .effect {
+    padding: 6rem 3rem;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  }
+
+  .effect-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+
+  .effect-inner .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    margin-bottom: 1.5rem;
+  }
+
+  .effect-inner blockquote {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--accent-blush);
+    margin-bottom: 2rem;
+  }
+
+  .effect-inner p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer .foot-left, footer .foot-right {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    nav .nav-links { gap: 1.5rem; }
+    .hero { padding: 4rem 1.5rem 3rem; }
+    .hero-images { gap: 2px; }
+    .hero-img-cell { aspect-ratio: 1/1; }
+    .image-selector { padding: 2rem 1.5rem 4rem; }
+    .image-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .featured { padding: 0 1.5rem 4rem; }
+    .technique { padding: 4rem 1.5rem; }
+    .technique-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .specs { padding: 3rem 1.5rem 4rem; }
+    .process { padding: 4rem 1.5rem; }
+    .effect { padding: 4rem 1.5rem; }
+    footer { padding: 2rem 1.5rem; }
+  }
+
+  @media (max-width: 600px) {
+    nav .nav-links { display: none; }
+    .hero-meta { gap: 1.5rem; }
+    .specs-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Technosomatic Real</div>
+  <ul class="nav-links">
+    <li><a href="#hero">Overview</a></li>
+    <li><a href="#views">Views</a></li>
+    <li><a href="#technique">Technique</a></li>
+    <li><a href="#process">Process</a></li>
+  </ul>
+</nav>
+
+<!-- HERO IMAGES — all 3 displayed between nav and text -->
+<section class="hero-images">
+  <div class="hero-img-cell">
+    <img src="hero1.jpg" alt="Selection 1">
+    <div class="hero-img-overlay"></div>
+    <span class="hero-img-tag">Selection 01</span>
+  </div>
+  <div class="hero-img-cell">
+    <img src="hero2.jpg" alt="Selection 2">
+    <div class="hero-img-overlay"></div>
+    <span class="hero-img-tag">Selection 02</span>
+  </div>
+  <div class="hero-img-cell">
+    <img src="hero3.jpg" alt="Selection 3">
+    <div class="hero-img-overlay"></div>
+    <span class="hero-img-tag">Selection 03</span>
+  </div>
+</section>
+
+<!-- HERO TEXT -->
+<section class="hero" id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-label">Volumetric Sculpture &mdash; Installation</div>
+  <h1 class="hero-title">
+    Descending Data:<br>
+    <span class="thin">Portrait of an Ego</span><br>
+    (10 Slices)
+  </h1>
+  <p class="hero-subtitle">
+    A 6-foot-tall volumetric sculpture creating a "holographic" 3D effect through physical layering&mdash;not digital projection. Ten architectural slices, suspended in light, forming a shimmering vision of Architectural Intelligence.
+  </p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span class="meta-label">Medium</span>
+      <span class="meta-value">Printed Mylar on Plexiglass</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Dimensions</span>
+      <span class="meta-value">36 &times; 48 in &times; 10 in deep</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Height</span>
+      <span class="meta-value">6 ft (with pedestal)</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Illumination</span>
+      <span class="meta-value">COB LED Edge-Lit</span>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE SELECTOR — original nomad images, no descriptions, selection tags only -->
+<section class="image-selector" id="views">
+  <div class="selector-header">
+    <span class="selector-title">Select Viewing Angle</span>
+    <span class="selector-note">Click to set as featured &bull; 3 perspectives available</span>
+  </div>
+  <div class="image-grid">
+
+    <div class="image-card active" onclick="selectImage(this, 'nomad11.png', 'View 1 — Front-angled perspective')">
+      <div class="card-img-wrap">
+        <img src="nomad11.png" alt="Selection 1">
+      </div>
+      <div class="card-info">
+        <span class="card-tag">Frontal &bull; Depth emphasis</span>
+      </div>
+    </div>
+
+    <div class="image-card" onclick="selectImage(this, 'nOMADaRT.png', 'View 2 — Three-quarter rotational view')">
+      <div class="card-img-wrap">
+        <img src="nOMADaRT.png" alt="Selection 2">
+      </div>
+      <div class="card-info">
+        <span class="card-tag">Rotational &bull; Volume emphasis</span>
+      </div>
+    </div>
+
+    <div class="image-card" onclick="selectImage(this, 'nOMADaRT22.png', 'View 3 — Side perspective')">
+      <div class="card-img-wrap">
+        <img src="nOMADaRT22.png" alt="Selection 3">
+      </div>
+      <div class="card-info">
+        <span class="card-tag">Lateral &bull; Structure emphasis</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FEATURED IMAGE -->
+<section class="featured reveal">
+  <div class="featured-wrap">
+    <img id="featured-img" src="nomad11.png" alt="Featured view of the sculpture">
+    <div class="featured-caption">
+      <span class="cap-title" id="featured-title">View 01 — Front-angled perspective</span>
+      <span class="cap-detail">DESCENDING DATA &bull; 10 SLICES</span>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNIQUE -->
+<section class="technique reveal" id="technique">
+  <div class="technique-grid">
+    <div class="technique-left">
+      <div class="section-label">The Technique</div>
+      <h2>Physical Holography:<br><em>Light Captured in Layers</em></h2>
+    </div>
+    <div class="technique-right">
+      <p>This installation achieves a holographic three-dimensional effect entirely through material physics. Large transparent Mylar sheets, each 36&times;48 inches, are individually printed with a specific architectural "slice" extracted from a computational model. Each printed Mylar sheet is then meticulously adhered to a matching plexiglass panel, creating a rigid, optically clear substrate for the image.</p>
+      <p>These panels are arranged in a precise stack on a low pedestal, separated by 2-inch air gaps that provide physical depth between each layer. The total assembly reaches approximately 10 inches deep, creating a tangible volumetric space in which the image exists.</p>
+      <p>The transformative element is light. COB (Chip on Board) LED strips, concealed at the base of the structure, project illumination upward through the edges of each plexiglass panel. The plexiglass acts as a waveguide, channeling light along its surface until it encounters the printed ink on the Mylar. At these contact points, the light scatters and glows, causing the architectural forms to appear luminous and suspended in mid-air.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs reveal">
+  <div class="specs-header">Technical Specifications</div>
+  <div class="specs-grid">
+    <div class="spec-item">
+      <div class="spec-num">10</div>
+      <div class="spec-label">Printed Slices</div>
+      <div class="spec-desc">Individual architectural cross-sections, each printed onto transparent Mylar film at high resolution.</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-num">36&times;48"</div>
+      <div class="spec-label">Sheet Dimensions</div>
+      <div class="spec-desc">Large-format prints ensuring immersive scale when assembled into the full sculptural volume.</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-num">10"</div>
+      <div class="spec-label">Stack Depth</div>
+      <div class="spec-desc">Total depth of the layered panel assembly, with calibrated 2-inch air gaps between each slice.</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-num">6 ft</div>
+      <div class="spec-label">Total Height</div>
+      <div class="spec-desc">Full installation height including the low pedestal base that houses the LED illumination system.</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-num">COB</div>
+      <div class="spec-label">LED Technology</div>
+      <div class="spec-desc">Chip-on-Board LED strips firing upward through plexiglass edges for seamless, even internal illumination.</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-num">2"</div>
+      <div class="spec-label">Air Gap Spacing</div>
+      <div class="spec-desc">Precisely maintained separation between panels, enabling parallax shifts as the viewer moves around the piece.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process reveal" id="process">
+  <div class="process-inner">
+    <div class="process-header">
+      <div class="section-label">Assembly Process</div>
+      <h2>From Data to Light</h2>
+    </div>
+    <div class="layers-stack">
+      <div class="layer-row">
+        <div class="layer-num">STEP 01</div>
+        <div class="layer-content">
+          <h3>Computational Slicing</h3>
+          <p>The source architectural form is computationally divided into 10 discrete cross-sectional slices, each representing a specific depth plane within the volumetric model.</p>
+        </div>
+      </div>
+      <div class="layer-row">
+        <div class="layer-num">STEP 02</div>
+        <div class="layer-content">
+          <h3>Mylar Printing</h3>
+          <p>Each slice is printed onto large-format transparent Mylar sheets at 36&times;48 inches, preserving the color fidelity and tonal gradients of the original computational rendering.</p>
+        </div>
+      </div>
+      <div class="layer-row">
+        <div class="layer-num">STEP 03</div>
+        <div class="layer-content">
+          <h3>Plexiglass Lamination</h3>
+          <p>Printed Mylar sheets are meticulously adhered to optically clear plexiglass panels of matching dimensions, creating rigid substrates that also serve as light guides.</p>
+        </div>
+      </div>
+      <div class="layer-row">
+        <div class="layer-num">STEP 04</div>
+        <div class="layer-content">
+          <h3>Spatial Assembly</h3>
+          <p>Panels are stacked with precision-cut 2-inch spacers on a low pedestal, reconstructing the volumetric form as a physical depth-field across the 10-inch assembly.</p>
+        </div>
+      </div>
+      <div class="layer-row">
+        <div class="layer-num">STEP 05</div>
+        <div class="layer-content">
+          <h3>Edge Illumination</h3>
+          <p>COB LED strips are installed at the base, projecting light upward into the plexiglass edges. Light propagates through the panels via total internal reflection until it hits printed ink, producing the luminous floating effect.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EFFECT -->
+<section class="effect reveal">
+  <div class="effect-inner">
+    <div class="section-label">The Experience</div>
+    <blockquote>&ldquo;The internal architectural forms glow and float in mid-air, creating a shimmering, high-tech vision of Architectural Intelligence that transforms as you walk around it.&rdquo;</blockquote>
+    <p>The parallax effect between layers shifts with the viewer's position, causing the sculpture to reveal different aspects of its internal geometry from every angle. The piece exists somewhere between physical object and projected image&mdash;a data portrait made tangible through light and material.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-left">Descending Data: Portrait of an Ego (10 Slices) &mdash; 2026</div>
+  <div class="foot-right">Volumetric Sculpture &bull; Mylar / Plexiglass / COB LED</div>
+</footer>
+
+<script>
+  // Image selector
+  function selectImage(card, src, desc) {
+    document.querySelectorAll('.image-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    const featured = document.getElementById('featured-img');
+    const featTitle = document.getElementById('featured-title');
+    featured.style.opacity = '0';
+    featured.style.transition = 'opacity 0.3s';
+    setTimeout(() => {
+      featured.src = src;
+      featTitle.textContent = desc;
+      featured.style.opacity = '1';
+    }, 250);
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
